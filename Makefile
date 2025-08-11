@@ -38,6 +38,7 @@ clean:
 # Install Tailpress theme using Composer
 install-theme:
 	@echo "🎨 Installing Tailpress theme..."
+	@mkdir -p wp-content/themes
 	@if [ ! -d "wp-content/themes/tailpress-theme" ]; then \
 		composer create-project tailpress/tailpress wp-content/themes/tailpress-theme; \
 	else \
@@ -61,12 +62,12 @@ wp-install:
 		sleep 1; \
 	done
 	@echo "🚀 Installing WordPress..."
-	@docker-compose exec -T wordpress wp core install --url=http://localhost:8000 --title="Tailpress Dev" --admin_user=admin --admin_password=password --admin_email=admin@example.com --skip-email
+	@docker-compose exec -T wordpress wp core install --url=http://localhost:8000 --title="Tailpress Dev" --admin_user=admin --admin_password=password --admin_email=admin@example.com --skip-email --allow-root
 
 # Activate the theme using WP-CLI
 theme-activate:
 	@echo "🎨 Activating Tailpress theme..."
-	@docker-compose exec -T wordpress wp theme activate tailpress-theme
+	@docker-compose exec -T wordpress wp theme activate tailpress-theme --allow-root
 
 # Run the Vite development server
 dev:
@@ -80,7 +81,7 @@ cli:
 
 # Run WP-CLI commands from the host
 wp:
-	@docker-compose exec wordpress wp $(filter-out $@,$(MAKECMDGOALS))
+	@docker-compose exec wordpress wp $(filter-out $@,$(MAKECMDGOALS)) --allow-root
 
 # Display help
 help:
